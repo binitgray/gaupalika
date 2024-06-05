@@ -91,9 +91,9 @@ export default function Gaupalika() {
       case "staffSlider":
         setStaffSlider(filteredMedia);
         break;
-      case "mainContain":
-        setMainContain(filteredMedia);
-        break;
+      // case "mainContain":
+      //   setMainContain(filteredMedia);
+      //   break;
       default:
         break;
     }
@@ -207,28 +207,28 @@ export default function Gaupalika() {
       "Gau-Palika-Main-Banner"
     );
     if (response.Code == 200) {
-      await saveText(response.Data.SettingKey, response.Data, "mainContain");
+      
+      await saveText(response.Data.SettingKey, response?.Data?.Banners, "mainContain");
     }
     const media = await getAllMedia();
-    const detail:any = media.filter((item) => item.type === "mainContain");
-    if (detail.length>0) {
-      await processAndSaveImagesGrayMain(detail, "mainContain");
+    const detail:any = media.find((item) => item.id === "Gau-Palika-Main-Banner");
+      await processAndSaveImagesGrayMain(detail?.data, "mainContains");
       setIsLoading(false);
-    }
   };
   const processAndSaveImagesGrayMain = async (items: any, type: any) => {
-    const promises = items && items?.map(async (item: any, index: any) => {
-      const imageUrl = `https://api.graycode.com.np/${item?.data?.ImagePath}`;
-      const base64 = await urlToBase64(imageUrl);
-      item.image = base64;
-      if (item?.data?.ImagePath) {
-        await saveMedia(item?.data?.Id, item, type);
+
+    const promises = items && items.map(async (item: any, index: any) => {
+        const imageUrl = `https://api.graycode.com.np/${item?.ImagePath}`;
+        const base64 = await urlToBase64(imageUrl);
+        item.image = base64;
+      if (item?.ImagePath) {
+        await saveMedia(item?.Id, item, type);
       }
     });
     await Promise.all(promises);
     const media = await getAllMedia();
     const filteredMedia = media.filter((item) => item.type === type);
-    if (type == "mainContain") {
+    if (type == "mainContains") {
       setMainContain(filteredMedia);
     }
   };
@@ -264,6 +264,8 @@ export default function Gaupalika() {
       setNotice(detail?.data?.NoticePopupoutputVM);
     }
   };
+  
+  console.log("main",mainContain);
   
 
   
